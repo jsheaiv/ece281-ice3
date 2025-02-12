@@ -1,5 +1,3 @@
---+----------------------------------------------------------------------------
---| 
 --| DESCRIPTION   : This file implements the top level module for a BASYS 
 --|
 --|     Ripple-Carry Adder: S = A + B
@@ -56,15 +54,35 @@ end top_basys3;
 architecture top_basys3_arch of top_basys3 is 
 	
     -- declare the component of your top-level design
-
+    component ripple_adder
+        Port (
+            A : in std_logic_vector(3 downto 0);
+            B : in std_logic_vector(3 downto 0);
+            Cin : in std_logic;
+            S : out std_logic_vector(3 downto 0);
+            Cout : out std_logic
+        );
+       end component;
     -- declare any signals you will need	
-  
-begin
+    signal A, B, S : std_logic_vector (3 downto 0);
+    signal Cin, Cout : std_logic;
+    begin
 	-- PORT MAPS --------------------
-   
+    Cin <= sw(0);
+    A <= sw(4 downto 1);
+    B <= sw(15 downto 12);
 	---------------------------------
-	
+    RCA: ripple_adder
+        Port map (
+            A    => A,
+            B    => B,
+            Cin  => Cin,
+            S  => S,
+            Cout => Cout
+        );
 	-- CONCURRENT STATEMENTS --------
-	led(14 downto 4) <= (others => '0'); -- Ground unused LEDs
+	led(3 downto 0)  <= S;  -- Assign Sum to LED 3-0
+led(14 downto 4) <= (others => '0');  -- Ensure unused LEDs are off
+led(15) <= Cout;  -- Assign Carry-Out to LED 15 
 	---------------------------------
 end top_basys3_arch;
